@@ -6,6 +6,7 @@ use App\Enums\LogEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Arr;
 
 class IpAddress extends Model
 {
@@ -26,31 +27,33 @@ class IpAddress extends Model
 
     protected static function booted()
     {
-        static::created(function ($ip) {
+        $allowed = ['label', 'address', 'comment'];
+
+        static::created(function ($ip) use ($allowed) {
             AuditLog::create([
                 'user_id' => auth()->id(),
                 'ip_address_id' => $ip->id,
                 'action' => LogEnum::CREATED->value,
-                'new_values' => $ip->toArray(),
+                'new_values' => Arr::only($ip->toArray(), $allowed),
             ]);
         });
 
-        static::updating(function ($ip) {
+        static::updating(function ($ip) use ($allowed) {
             AuditLog::create([
                 'user_id' => auth()->id(),
                 'ip_address_id' => $ip->id,
                 'action' => LogEnum::UPDATED->value,
-                'old_values' => $ip->getOriginal(),
-                'new_values' => $ip->getDirty(),
+                'old_values' => Arr::only($ip->getOriginal(), $allowed),
+                'new_values' => Arr::only($ip->getDirty(), $allowed),
             ]);
         });
 
-        static::deleting(function ($ip) {
+        static::deleting(function ($ip) use ($allowed) {
             AuditLog::create([
                 'user_id' => auth()->id(),
                 'ip_address_id' => $ip->id,
                 'action' => LogEnum::DELETED->value,
-                'old_values' => $ip->toArray(),
+                'old_values' => Arr::only($ip->toArray(), $allowed),
             ]);
         });
     }
