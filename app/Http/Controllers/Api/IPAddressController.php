@@ -23,11 +23,18 @@ class IPAddressController extends Controller
 
     public function store(IpAddressRequest $request): Response
     {
-        IpAddress::create($request->validated());
+        IpAddress::create(array_merge($request->validated(), [
+            'user_id' => auth()->id(),
+        ]));
 
         return response()->json([
             'message' => 'IP address created successfully.',
         ], Response::HTTP_CREATED);
+    }
+
+    public function show(IpAddress $ipAddress): IpAddressResource
+    {
+        return new IpAddressResource($ipAddress);
     }
 
     public function update(IpAddressRequest $request, IpAddress $ipAddress): Response

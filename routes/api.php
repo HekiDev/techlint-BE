@@ -13,6 +13,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('ip-address')->group(function () {
         Route::get('/', [IPAddressController::class, 'index']);
         Route::post('/store', [IPAddressController::class, 'store']);
+        Route::get('/{ipAddress}/show', [IPAddressController::class, 'show']);
         Route::post('/{ipAddress}/update', [IPAddressController::class, 'update']);
         Route::delete('/{ipAddress}/delete', [IPAddressController::class, 'destroy']);
     });
