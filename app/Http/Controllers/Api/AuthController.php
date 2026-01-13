@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\LogEnum;
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +29,8 @@ class AuthController extends Controller
             ]);
         }
 
+        AuditLog::create(['user_id' => $user->id, 'action' => LogEnum::LOGIN->value]);
+
         return response()->json([
             'user' => $user,
             'token' => $user->createToken($user->password)->plainTextToken,
@@ -41,6 +45,8 @@ class AuthController extends Controller
             $authUser->tokens()->delete();
             $authUser->save();
         }
+
+        AuditLog::create(['user_id' => $authUser->id, 'action' => LogEnum::LOGOUT->value]);
     }
 
     public function user(Request $request): Response

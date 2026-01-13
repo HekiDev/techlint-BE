@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuditController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\IPAddressController;
 use Illuminate\Support\Facades\Route;
@@ -16,5 +17,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/{ipAddress}/show', [IPAddressController::class, 'show']);
         Route::post('/{ipAddress}/update', [IPAddressController::class, 'update']);
         Route::delete('/{ipAddress}/delete', [IPAddressController::class, 'destroy']);
+    });
+
+    Route::prefix('audits')->middleware('auth.super-admin')->group(function () {
+        Route::get('/', [AuditController::class, 'index']);
     });
 });
