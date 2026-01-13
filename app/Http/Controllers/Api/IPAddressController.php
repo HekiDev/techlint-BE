@@ -7,6 +7,7 @@ use App\Http\Requests\IpAddressRequest;
 use App\Http\Resources\Api\IpAddressResource;
 use App\Models\IpAddress;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class IPAddressController extends Controller
@@ -39,6 +40,8 @@ class IPAddressController extends Controller
 
     public function update(IpAddressRequest $request, IpAddress $ipAddress): Response
     {
+        Gate::authorize('update', $ipAddress);
+
         $ipAddress->update($request->validated());
 
         return response()->json([
@@ -48,6 +51,8 @@ class IPAddressController extends Controller
 
     public function destroy(IpAddress $ipAddress): Response
     {
+        Gate::authorize('delete', $ipAddress);
+
         $ipAddress->delete();
 
         return response()->json([
