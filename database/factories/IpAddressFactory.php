@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class IpAddressFactory extends Factory
             'address' => $this->faker->ipv4(),
             'label' => $this->faker->word(),
             'comment' => $this->faker->sentence(),
+            'user_id' => User::factory()->create()->id,
         ];
     }
 }
